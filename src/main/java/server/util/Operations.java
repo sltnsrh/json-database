@@ -15,7 +15,4 @@ public final class Operations {
         processesMap.put("set", new DataSetter());
         processesMap.put("delete", new DataDeleter());
     }
-
-    private Operations(){
-    }
 }

@@ -3,20 +3,25 @@ package server.service;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import server.RequestFromClient;
+import server.ServerResponse;
 import server.storage.DataStorage;
 import server.util.ReadWriteLocker;
+import server.util.ResponseProducer;
 
 public class DataSetter implements Executable {
 
     @Override
-    public String processData(RequestFromClient requestFromClient) {
+    public ServerResponse processData(RequestFromClient requestFromClient) {
         try {
             ReadWriteLocker.writeLock.lock();
             JsonElement key = requestFromClient.getKey();
             JsonElement value = requestFromClient.getValue();
             if (key.isJsonPrimitive()) {
                 DataStorage.getDataBase().add(key.getAsString(), value);
-            } else if (key.isJsonArray()) {
+                DataStorage.writeDbToFile();
+                return ResponseProducer.getOk();
+            }
+            if (key.isJsonArray()) {
                 JsonArray keys = key.getAsJsonArray();
                 String keyToAddValue = keys.remove(keys.size() - 1).getAsString();
                 JsonElement jsonElementToChange = DataStorage.findElement(keys);
@@ -24,13 +29,12 @@ public class DataSetter implements Executable {
                     jsonElementToChange = DataStorage.createElement(keys);
                 }
                 jsonElementToChange.getAsJsonObject().add(keyToAddValue, value);
-            } else {
-                return "ERROR";
+                DataStorage.writeDbToFile();
+                return ResponseProducer.getOk();
             }
-            DataStorage.writeDbToFile();
         } finally {
             ReadWriteLocker.writeLock.unlock();
         }
-        return "OK";
+        return ResponseProducer.getNoSuchKey();
     }
 }

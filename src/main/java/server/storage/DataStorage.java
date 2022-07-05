@@ -43,7 +43,7 @@ public final class DataStorage {
     public static JsonElement findElement(JsonArray keys) {
         JsonElement searchElement = DataStorage.dataBase;
         for (JsonElement key: keys) {
-            if (!searchElement.getAsJsonObject().has(key.getAsString())) {
+            if (!searchElement.isJsonObject() || !searchElement.getAsJsonObject().has(key.getAsString())) {
                 return null;
             }
             searchElement = searchElement.getAsJsonObject().get(key.getAsString());

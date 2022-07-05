@@ -3,12 +3,12 @@ package server;
 import com.google.gson.JsonElement;
 
 public class ServerResponse {
-    private String response;
+    private String status;
     private String reason;
     private JsonElement value;
 
-    public void setResponse(String response) {
-        this.response = response;
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public void setReason(String reason) {
@@ -19,8 +19,8 @@ public class ServerResponse {
         this.value = value;
     }
 
-    public String getResponse() {
-        return response;
+    public String getStatus() {
+        return status;
     }
 
     public String getReason() {

@@ -1,7 +1,8 @@
 package server.service;
 
 import server.RequestFromClient;
+import server.ServerResponse;
 
 public interface Executable {
-    String processData(RequestFromClient requestFromClient);
+    ServerResponse processData(RequestFromClient requestFromClient);
 }
