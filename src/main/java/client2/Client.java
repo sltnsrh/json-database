@@ -1,4 +1,4 @@
-package client;
+package client2;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -16,7 +16,7 @@ public class Client {
                 DataInputStream input = new DataInputStream(socket.getInputStream());
                 DataOutputStream output = new DataOutputStream(socket.getOutputStream())
         ) {
-            System.out.println("Client started!");
+            System.out.println("Client 2 started!");
             //the loop is just for multithreading tests
             boolean keepSocket = true;
             while (keepSocket) {

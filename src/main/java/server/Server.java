@@ -18,25 +18,28 @@ public class Server {
         try (ServerSocket server = new ServerSocket(port, 50, InetAddress.getByName(address))) {
             DataStorage.init();
             System.out.println("Server started!");
-            while (!executor.isShutdown()) {
+            while (true) {
                 System.out.println("Waiting for a new client...");
-                try {
-                    Socket socket = server.accept();
-                    System.out.println("Processing request...");
-                    executor.execute(new ClientHandler(socket));
-                } catch(IOException e) {
-                    throw new RuntimeException("Can't accept connection for a client");
-                }
+                Socket socket = server.accept();
+                System.out.println("Client connected.");
+                System.out.println("Processing request...");
+                executor.execute(new ClientHandler(socket));
             }
+
+            /*while (true) {
+                System.out.println("Waiting for a new client...");
+                Socket socket = server.accept();
+                System.out.println("Client connected.");
+                new Thread(() -> {
+                    ClientHandler clientHandler = new ClientHandler(socket);
+                    System.out.println("Processing request...");
+                    clientHandler.run();
+                }).start();
+            }*/
+
         } catch (IOException e) {
             throw new RuntimeException("Can't start the server with port "
                     + port + " and address " + address, e);
         }
-    }
-
-    public static void closeServer() {
-        executor.shutdown();
-        System.out.println("Server was closed.");
-        System.exit(0);
     }
 }
