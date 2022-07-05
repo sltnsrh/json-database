@@ -3,10 +3,10 @@
 JSON database is a single file database that stores information in the form of JSON. It is a remote database, 
 so it's usually accessed through the Internet.
 
-Socket connection is built with using of a multithreaded socket that accepts requests from many clients simultaneously.
+Socket connection is built with using of a multithreaded server that accepts requests from many clients simultaneously.
 
 To use the app:
-- run socket Main
+- run server Main
 - run client Main with args as listed bellow
 
 You can send requests by two ways: 
