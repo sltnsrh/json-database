@@ -7,24 +7,14 @@ public class ServerResponse {
     private String reason;
     private JsonElement value;
 
-    public void setStatus(String status) {
+    public ServerResponse(String status, String reason, JsonElement value) {
         this.status = status;
-    }
-
-    public void setReason(String reason) {
         this.reason = reason;
+        this.value = value;
     }
 
     public void setValue(JsonElement value) {
         this.value = value;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public String getReason() {
-        return reason;
     }
 
     public JsonElement getValue() {

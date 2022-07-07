@@ -9,22 +9,14 @@ public final class ResponseProducer {
     public static final String  OK_STATUS = "OK";
 
     public static ServerResponse getNoSuchKey() {
-        ServerResponse serverResponse = new ServerResponse();
-        serverResponse.setStatus(ERROR_STATUS);
-        serverResponse.setReason(NO_SUCH_KEY_REASON);
-        return serverResponse;
+        return new ServerResponse(ERROR_STATUS, NO_SUCH_KEY_REASON, null);
     }
 
     public static ServerResponse getValueOk(String value) {
-        ServerResponse serverResponse = new ServerResponse();
-        serverResponse.setValue(JsonParser.parseString(value));
-        serverResponse.setStatus(OK_STATUS);
-        return serverResponse;
+        return new ServerResponse(OK_STATUS, null, JsonParser.parseString(value));
     }
 
     public static ServerResponse getOk() {
-        ServerResponse serverResponse = new ServerResponse();
-        serverResponse.setStatus(OK_STATUS);
-        return serverResponse;
+        return new ServerResponse(OK_STATUS, null, null);
     }
 }
