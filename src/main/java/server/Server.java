@@ -25,18 +25,6 @@ public class Server {
                 System.out.println("Processing request...");
                 executor.execute(new ClientHandler(socket));
             }
-
-            /*while (true) {
-                System.out.println("Waiting for a new client...");
-                Socket socket = server.accept();
-                System.out.println("Client connected.");
-                new Thread(() -> {
-                    ClientHandler clientHandler = new ClientHandler(socket);
-                    System.out.println("Processing request...");
-                    clientHandler.run();
-                }).start();
-            }*/
-
         } catch (IOException e) {
             throw new RuntimeException("Can't start the server with port "
                     + port + " and address " + address, e);
