@@ -31,6 +31,17 @@ public final class DataStorage {
         }
     }
 
+    private static JsonObject readDbFromFile(Path path) throws IOException {
+        try (Reader reader = Files.newBufferedReader(path)) {
+            return (JsonObject) JsonParser.parseReader(reader);
+        } catch (Exception e) {
+            Files.writeString(path, "{}");
+            try (Reader reader = Files.newBufferedReader(path)) {
+                return (JsonObject) JsonParser.parseReader(reader);
+            }
+        }
+    }
+
     public static void writeDbToFile() {
         File file = new File(DB_PATH);
         try (FileWriter writer = new FileWriter(file)) {
@@ -60,16 +71,5 @@ public final class DataStorage {
             searchElement = searchElement.getAsJsonObject().get(key.getAsString());
         }
         return searchElement;
-    }
-
-    private static JsonObject readDbFromFile(Path path) throws IOException {
-        try (Reader reader = Files.newBufferedReader(path)) {
-            return (JsonObject) JsonParser.parseReader(reader);
-        } catch (Exception e) {
-            Files.writeString(path, "{}");
-            try (Reader reader = Files.newBufferedReader(path)) {
-                return (JsonObject) JsonParser.parseReader(reader);
-            }
-        }
     }
 }
