@@ -6,35 +6,47 @@ import server.RequestFromClient;
 import server.ServerResponse;
 import server.storage.DataStorage;
 import server.util.ReadWriteLocker;
-import server.util.ResponseProducer;
 
 public class DataSetter implements Executable {
 
     @Override
-    public ServerResponse processData(RequestFromClient requestFromClient) {
+    public ServerResponse processData(RequestFromClient requestFromClient,
+                                      ResponseProducer responseProducer) {
         try {
             ReadWriteLocker.writeLock.lock();
             JsonElement key = requestFromClient.getKey();
             JsonElement value = requestFromClient.getValue();
             if (key.isJsonPrimitive()) {
-                DataStorage.getDataBase().add(key.getAsString(), value);
-                DataStorage.writeDbToFile();
-                return ResponseProducer.getOk();
+                return getResponseFromPrimitive(key, value, responseProducer);
             }
             if (key.isJsonArray()) {
-                JsonArray keys = key.getAsJsonArray();
-                String keyToAddValue = keys.remove(keys.size() - 1).getAsString();
-                JsonElement jsonElementToChange = DataStorage.findElement(keys);
-                if (jsonElementToChange == null) {
-                    jsonElementToChange = DataStorage.createElement(keys);
-                }
-                jsonElementToChange.getAsJsonObject().add(keyToAddValue, value);
-                DataStorage.writeDbToFile();
-                return ResponseProducer.getOk();
+                return getResponseFromJsonArray(key, value, responseProducer);
             }
         } finally {
             ReadWriteLocker.writeLock.unlock();
         }
-        return ResponseProducer.getNoSuchKey();
+        return responseProducer.getNoSuchKey();
+    }
+
+    private ServerResponse getResponseFromPrimitive(
+            JsonElement key, JsonElement value, ResponseProducer responseProducer
+    ) {
+        DataStorage.getDataBase().add(key.getAsString(), value);
+        DataStorage.writeDbToFile();
+        return responseProducer.getOk();
+    }
+
+    private ServerResponse getResponseFromJsonArray(
+            JsonElement key, JsonElement value, ResponseProducer responseProducer
+    ) {
+        JsonArray keys = key.getAsJsonArray();
+        String keyToAddValue = keys.remove(keys.size() - 1).getAsString();
+        JsonElement jsonElementToChange = DataStorage.findElement(keys);
+        if (jsonElementToChange == null) {
+            jsonElementToChange = DataStorage.createElement(keys);
+        }
+        jsonElementToChange.getAsJsonObject().add(keyToAddValue, value);
+        DataStorage.writeDbToFile();
+        return responseProducer.getOk();
     }
 }

@@ -6,44 +6,46 @@ import server.RequestFromClient;
 import server.ServerResponse;
 import server.storage.DataStorage;
 import server.util.ReadWriteLocker;
-import server.util.ResponseProducer;
 
 public class DataGetter implements Executable {
 
     @Override
-    public ServerResponse processData(RequestFromClient requestFromClient) {
+    public ServerResponse processData(RequestFromClient requestFromClient,
+                                      ResponseProducer responseProducer) {
         try {
             ReadWriteLocker.readLock.lock();
             JsonElement key = requestFromClient.getKey();
             if (key.isJsonPrimitive() && DataStorage.getDataBase().has(key.getAsString())) {
-                return getResponseFromPrimitive(key);
+                return getResponseFromPrimitive(key, responseProducer);
             }
             if (key.isJsonArray()) {
-                return getResponseFromJsonArray(key);
+                return getResponseFromJsonArray(key, responseProducer);
             }
         } finally {
             ReadWriteLocker.readLock.unlock();
         }
-        return ResponseProducer.getNoSuchKey();
+        return responseProducer.getNoSuchKey();
     }
 
-    private ServerResponse getResponseFromPrimitive(JsonElement key) {
+    private ServerResponse getResponseFromPrimitive(JsonElement key,
+                                                    ResponseProducer responseProducer) {
         String value = DataStorage.getDataBase().get(key.getAsString()).toString();
-        return ResponseProducer.getValueOk(value);
+        return responseProducer.getValueOk(value);
     }
 
-    private ServerResponse getResponseFromJsonArray(JsonElement key) {
+    private ServerResponse getResponseFromJsonArray(JsonElement key,
+                                                    ResponseProducer responseProducer) {
         JsonArray keys = key.getAsJsonArray();
         if (keys.size() == 1) {
             String value = DataStorage.getDataBase().get(keys.getAsString()).toString();
-            return ResponseProducer.getValueOk(value);
+            return responseProducer.getValueOk(value);
         }
         JsonElement jsonElementToGet = DataStorage.findElement(keys);
         if (jsonElementToGet == null) {
-            return ResponseProducer.getNoSuchKey();
+            return responseProducer.getNoSuchKey();
         }
         String value = getValueFromJsonElement(jsonElementToGet);
-        return ResponseProducer.getValueOk(value);
+        return responseProducer.getValueOk(value);
     }
 
     private String getValueFromJsonElement(JsonElement jsonElement) {

@@ -4,5 +4,6 @@ import server.RequestFromClient;
 import server.ServerResponse;
 
 public interface Executable {
-    ServerResponse processData(RequestFromClient requestFromClient);
+    ServerResponse processData(RequestFromClient requestFromClient,
+                               ResponseProducer responseProducer);
 }

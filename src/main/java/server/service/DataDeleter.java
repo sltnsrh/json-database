@@ -6,34 +6,46 @@ import server.RequestFromClient;
 import server.ServerResponse;
 import server.storage.DataStorage;
 import server.util.ReadWriteLocker;
-import server.util.ResponseProducer;
 
 public class DataDeleter implements Executable {
 
     @Override
-    public ServerResponse processData(RequestFromClient requestFromClient) {
+    public ServerResponse processData(RequestFromClient requestFromClient,
+                                      ResponseProducer responseProducer) {
         try {
             ReadWriteLocker.writeLock.lock();
             JsonElement key = requestFromClient.getKey();
             if (key.isJsonPrimitive() && DataStorage.getDataBase().has(key.getAsString())) {
-                DataStorage.getDataBase().remove(key.getAsString());
-                DataStorage.writeDbToFile();
-                return ResponseProducer.getOk();
+                return getResponseFromPrimitive(key, responseProducer);
             }
             if (key.isJsonArray()) {
-                JsonArray keys = key.getAsJsonArray();
-                String keyToDelete = keys.remove(keys.size() - 1).getAsString();
-                JsonElement jsonElementToDelete = DataStorage.findElement(keys);
-                if (jsonElementToDelete == null || !jsonElementToDelete.getAsJsonObject().has(keyToDelete)) {
-                    return ResponseProducer.getNoSuchKey();
-                }
-                jsonElementToDelete.getAsJsonObject().remove(keyToDelete);
-                DataStorage.writeDbToFile();
-                return ResponseProducer.getOk();
+                return getResponseFromJsonArray(key, responseProducer);
             }
         } finally {
             ReadWriteLocker.writeLock.unlock();
         }
-        return ResponseProducer.getNoSuchKey();
+        return responseProducer.getNoSuchKey();
+    }
+
+    private ServerResponse getResponseFromPrimitive(
+            JsonElement key, ResponseProducer responseProducer
+    ) {
+        DataStorage.getDataBase().remove(key.getAsString());
+        DataStorage.writeDbToFile();
+        return responseProducer.getOk();
+    }
+
+    private ServerResponse getResponseFromJsonArray(
+            JsonElement key, ResponseProducer responseProducer
+    ) {
+        JsonArray keys = key.getAsJsonArray();
+        String keyToDelete = keys.remove(keys.size() - 1).getAsString();
+        JsonElement jsonElementToDelete = DataStorage.findElement(keys);
+        if (jsonElementToDelete == null || !jsonElementToDelete.getAsJsonObject().has(keyToDelete)) {
+            return responseProducer.getNoSuchKey();
+        }
+        jsonElementToDelete.getAsJsonObject().remove(keyToDelete);
+        DataStorage.writeDbToFile();
+        return responseProducer.getOk();
     }
 }
