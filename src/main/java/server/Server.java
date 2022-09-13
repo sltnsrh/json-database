@@ -20,10 +20,10 @@ public class Server {
             System.out.println("Server started!");
             while (true) {
                 System.out.println("Waiting for a new client...");
-                Socket socket = server.accept();
+                Socket client = server.accept();
                 System.out.println("Client connected.");
                 System.out.println("Processing request...");
-                executor.execute(new ClientHandler(socket));
+                executor.execute(new ClientHandler(client));
             }
         } catch (IOException e) {
             throw new RuntimeException("Can't start the server with port "
