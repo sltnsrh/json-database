@@ -10,9 +10,7 @@ import server.service.ProcessExecutor;
 import server.service.ResponseProducer;
 
 public class ClientHandler implements Runnable {
-    private static final String EXIT_MARK = "exit";
     private final Socket client;
-    private boolean stayOnline = true;
 
     public ClientHandler(Socket client) {
         this.client = client;
@@ -20,22 +18,15 @@ public class ClientHandler implements Runnable {
 
     @Override
     public void run() {
-        try {
-            DataInputStream input = new DataInputStream(client.getInputStream());
-            DataOutputStream output = new DataOutputStream(client.getOutputStream());
-            while (stayOnline) {
-                String jsonClientRequest = input.readUTF();
-                ResponseProducer responseProducer = new ResponseProducer();
-                ServerResponse serverResponse = new ProcessExecutor(responseProducer).getResponse(jsonClientRequest);
-                String jsonServerResponse = getJsonServerResponse(serverResponse);
-                output.writeUTF(jsonServerResponse);
-                if (jsonClientRequest.toLowerCase().contains(EXIT_MARK)) {
-                    stayOnline = false;
-                    client.close();
-                    input.close();
-                    output.close();
-                }
-            }
+        try (
+                DataInputStream input = new DataInputStream(client.getInputStream());
+                DataOutputStream output = new DataOutputStream(client.getOutputStream())
+        ) {
+            String jsonClientRequest = input.readUTF();
+            ResponseProducer responseProducer = new ResponseProducer();
+            ServerResponse serverResponse = new ProcessExecutor(responseProducer).getResponse(jsonClientRequest);
+            String jsonServerResponse = getJsonServerResponse(serverResponse);
+            output.writeUTF(jsonServerResponse);
         } catch (IOException e) {
             throw new RuntimeException("Can't accept client socket connection.", e);
         }
