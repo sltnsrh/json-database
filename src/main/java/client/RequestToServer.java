@@ -19,6 +19,39 @@ public class RequestToServer {
     @Parameter(names = {"-in"})
     private String fileName;
 
+    public static Builder builder() {
+        return new RequestToServer().new Builder();
+    }
+
+    public class Builder {
+        private Builder() {
+        }
+
+        public Builder setType(String type) {
+            RequestToServer.this.type = type;
+            return this;
+        }
+
+        public Builder setKey(String key) {
+            RequestToServer.this.key = key;
+            return this;
+        }
+
+        public Builder setValue(String value) {
+            RequestToServer.this.value = value;
+            return this;
+        }
+
+        public Builder setFileName(String fileName) {
+            RequestToServer.this.fileName = fileName;
+            return this;
+        }
+
+        public RequestToServer build() {
+            return RequestToServer.this;
+        }
+    }
+
     public String getStringRequest() {
         if (fileName != null) {
             try (Reader reader = Files.newBufferedReader(Path.of(CLIENT_DATA_PATH + fileName))) {
