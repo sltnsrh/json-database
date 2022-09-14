@@ -17,26 +17,25 @@ public class DataSetter implements Executable {
             JsonElement key = requestFromClient.getKey();
             JsonElement value = requestFromClient.getValue();
             if (key.isJsonPrimitive()) {
-                return getResponseFromPrimitive(key, value, responseProducer);
+                setKeyFromPrimitive(key, value, responseProducer);
             }
             if (key.isJsonArray()) {
-                return getResponseFromJsonArray(key, value, responseProducer);
+                setKeyFromJsonArray(key, value, responseProducer);
             }
         } finally {
             ReadWriteLocker.writeLock.unlock();
         }
-        return responseProducer.getNoSuchKey();
+        return responseProducer.getOk();
     }
 
-    private ServerResponse getResponseFromPrimitive(
+    private void setKeyFromPrimitive(
             JsonElement key, JsonElement value, ResponseProducer responseProducer
     ) {
         DataStorage.getDataBase().add(key.getAsString(), value);
         DataStorage.writeDbToFile();
-        return responseProducer.getOk();
     }
 
-    private ServerResponse getResponseFromJsonArray(
+    private void setKeyFromJsonArray(
             JsonElement key, JsonElement value, ResponseProducer responseProducer
     ) {
         JsonArray keys = key.getAsJsonArray();
@@ -47,6 +46,5 @@ public class DataSetter implements Executable {
         }
         jsonElementToChange.getAsJsonObject().add(keyToAddValue, value);
         DataStorage.writeDbToFile();
-        return responseProducer.getOk();
     }
 }
