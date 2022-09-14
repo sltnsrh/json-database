@@ -8,7 +8,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import server.storage.DataStorage;
 
-public class Server {
+public class Server implements Runnable {
     private static final String address = "127.0.0.1";
     private static final int port = 8090;
     private static final ExecutorService executor =
@@ -17,12 +17,12 @@ public class Server {
     public void run() {
         try (ServerSocket server = new ServerSocket(port, 50, InetAddress.getByName(address))) {
             DataStorage.init();
-            System.out.println("Server started!");
+            System.out.println("Server: Server started!");
             while (true) {
-                System.out.println("Waiting for a new client...");
+                System.out.println("Server: Waiting for a new client...");
                 Socket client = server.accept();
-                System.out.println("Client connected.");
-                System.out.println("Processing request...");
+                System.out.println("Server: Client connected.");
+                System.out.println("Server: Processing request...");
                 executor.execute(new ClientHandler(client));
             }
         } catch (IOException e) {
