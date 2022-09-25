@@ -5,14 +5,14 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
+import server.util.Params;
 
 public class Client {
-    private static final String address = "127.0.0.1";
-    private static final int port = 8090;
 
     public void runClient(RequestToServer requestToServer) {
         try (
-                Socket socket = new Socket(InetAddress.getByName(address), port);
+                Socket socket = new Socket(
+                        InetAddress.getByName(Params.serverAddress), Params.serverPort);
                 DataInputStream input = new DataInputStream(socket.getInputStream());
                 DataOutputStream output = new DataOutputStream(socket.getOutputStream())
         ) {
