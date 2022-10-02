@@ -5,13 +5,16 @@ import client.RequestToServer;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.PrintStream;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import server.Server;
 
 class DataGetterTest {
     private static final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-    private static final Client client = new Client();
+    private static Client client;
+    private static Server server;
 
     @BeforeAll
     static void setup() {
@@ -20,9 +23,12 @@ class DataGetterTest {
         if (db.exists()) {
             db.delete();
         }
+        server = new Server();
+        new Thread(server).start();
         RequestToServer setRequest = RequestToServer.builder()
                 .setFileName("test3Set.json")
                 .build();
+        client = new Client();
         client.runClient(setRequest);
         System.setOut(new PrintStream(outContent));
     }
@@ -54,5 +60,10 @@ class DataGetterTest {
                 .build();
         client.runClient(setRequest);
         Assertions.assertTrue(outContent.toString().contains("No such key"));
+    }
+
+    @AfterAll
+    static void stop() {
+        server.stop();
     }
 }

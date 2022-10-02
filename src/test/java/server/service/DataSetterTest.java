@@ -6,20 +6,26 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import server.Server;
+import server.util.Params;
 
 class DataSetterTest {
-    private static final String DB_FILE_PATH = "src/main/resources/data/db.json";
-    private static final Client client = new Client();
+    private static Client client;
+    private static Server server;
 
     @BeforeAll
     static void setup() {
-        File db = new File(DB_FILE_PATH);
+        File db = new File(Params.DB_PATH);
         if (db.exists()) {
             db.delete();
         }
+        server = new Server();
+        new Thread(server).start();
+        client = new Client();
     }
 
     @Test
@@ -32,10 +38,10 @@ class DataSetterTest {
         client.runClient(setRequest);
         try {
             Assertions.assertTrue(
-                    Files.lines(Path.of(DB_FILE_PATH))
+                    Files.lines(Path.of(Params.DB_PATH))
                             .anyMatch(line -> line.contains("\"Person\": \"Bob\"")));
         } catch (IOException e) {
-            throw new RuntimeException("Can't read file with path: " + DB_FILE_PATH);
+            throwCantReadFileEx();
         }
     }
 
@@ -47,10 +53,10 @@ class DataSetterTest {
         client.runClient(setRequest);
         try {
             Assertions.assertTrue(
-                    Files.lines(Path.of(DB_FILE_PATH))
+                    Files.lines(Path.of(Params.DB_PATH))
                             .anyMatch(line -> line.contains("launches\": \"88")));
         } catch (IOException e) {
-            throw new RuntimeException("Can't read file with path: " + DB_FILE_PATH);
+            throwCantReadFileEx();
         }
     }
 
@@ -62,10 +68,20 @@ class DataSetterTest {
         client.runClient(setRequest);
         try {
             Assertions.assertTrue(
-                    Files.lines(Path.of(DB_FILE_PATH))
+                    Files.lines(Path.of(Params.DB_PATH))
                             .anyMatch(line -> line.contains("name\": \"Tesla")));
         } catch (IOException e) {
-            throw new RuntimeException("Can't read file with path: " + DB_FILE_PATH);
+            throwCantReadFileEx();
         }
+    }
+
+    private void throwCantReadFileEx() {
+        throw new RuntimeException("Can't read file with path: " + Params.DB_PATH);
+    }
+
+
+    @AfterAll
+    static void stop() {
+        server.stop();
     }
 }

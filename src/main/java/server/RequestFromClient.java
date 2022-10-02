@@ -18,4 +18,16 @@ public class RequestFromClient {
     public JsonElement getValue() {
         return value;
     }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public void setKey(JsonElement key) {
+        this.key = key;
+    }
+
+    public void setValue(JsonElement value) {
+        this.value = value;
+    }
 }

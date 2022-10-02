@@ -12,4 +12,8 @@ public class ServerResponse {
         this.reason = reason;
         this.value = value;
     }
+
+    public String getStatus() {
+        return status;
+    }
 }

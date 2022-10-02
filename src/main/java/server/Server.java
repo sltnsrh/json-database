@@ -10,34 +10,49 @@ import server.storage.DataStorage;
 import server.util.Params;
 
 public class Server implements Runnable {
-    private static final ExecutorService executor =
+    private final ExecutorService executor =
             Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
-    private static volatile boolean keepOn = true;
+    private final ServerSocket serverSocket;
+
+    {
+        try {
+            serverSocket = new ServerSocket(
+                    Params.SERVER_PORT, 50, InetAddress.getByName(Params.SERVER_ADDRESS));
+        } catch (IOException e) {
+            throw new RuntimeException("Can't start the server with port: " + Params.SERVER_PORT
+            + " and address: " + Params.SERVER_ADDRESS);
+        }
+    }
 
     public void run() {
-        try (ServerSocket server = new ServerSocket(
-                Params.serverPort,
-                50,
-                InetAddress.getByName(Params.serverAddress))) {
+        try {
             DataStorage.init();
             System.out.println("Server: Server started!");
-            while (keepOn) {
+            while (!serverSocket.isClosed()) {
                 System.out.println("Server: Waiting for a new client...");
-                Socket client = server.accept();
+                Socket client = serverSocket.accept();
                 System.out.println("Server: Client connected.");
                 executor.execute(new ClientHandler(client, this));
                 System.out.println("Server: Processing request...");
+                try {
+                    Thread.sleep(20);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
             }
             System.out.println("Server: Server was stopped.");
         } catch (IOException e) {
-            throw new RuntimeException("Can't start the server with port "
-                    + Params.serverPort + " and address " + Params.serverAddress, e);
+            throw new RuntimeException("Can't accept a client, because server is closed: " + serverSocket.isClosed());
         } finally {
             executor.shutdown();
         }
     }
 
     public void stop() {
-        keepOn = false;
+        try {
+            this.serverSocket.close();
+        } catch (IOException e) {
+            throw new RuntimeException("Can't close server socket connection.");
+        }
     }
 }
