@@ -11,9 +11,11 @@ import server.service.ResponseProducer;
 
 public class ClientHandler implements Runnable {
     private final Socket client;
+    private final Server server;
 
-    public ClientHandler(Socket client) {
+    public ClientHandler(Socket client, Server server) {
         this.client = client;
+        this.server = server;
     }
 
     @Override
@@ -27,6 +29,9 @@ public class ClientHandler implements Runnable {
             ServerResponse serverResponse = new ProcessExecutor(responseProducer).getResponse(jsonClientRequest);
             String jsonServerResponse = getJsonServerResponse(serverResponse);
             output.writeUTF(jsonServerResponse);
+            if (jsonClientRequest.toLowerCase().contains("exit")) {
+                server.stop();
+            }
         } catch (IOException e) {
             throw new RuntimeException("Can't accept client socket connection.", e);
         }
