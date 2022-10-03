@@ -5,7 +5,8 @@ import client.RequestToServer;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -36,13 +37,7 @@ class DataSetterTest {
                 .setValue("Bob")
                 .build();
         client.runClient(setRequest);
-        try {
-            Assertions.assertTrue(
-                    Files.lines(Path.of(Params.DB_PATH))
-                            .anyMatch(line -> line.contains("\"Person\": \"Bob\"")));
-        } catch (IOException e) {
-            throwCantReadFileEx();
-        }
+        assertTrueDataExistInDb("\"Person\": \"Bob\"");
     }
 
     @Test
@@ -51,13 +46,7 @@ class DataSetterTest {
                 .setFileName("test2Set.json")
                 .build();
         client.runClient(setRequest);
-        try {
-            Assertions.assertTrue(
-                    Files.lines(Path.of(Params.DB_PATH))
-                            .anyMatch(line -> line.contains("launches\": \"88")));
-        } catch (IOException e) {
-            throwCantReadFileEx();
-        }
+        assertTrueDataExistInDb("launches\": \"88");
     }
 
     @Test
@@ -66,19 +55,17 @@ class DataSetterTest {
                 .setFileName("test3Set.json")
                 .build();
         client.runClient(setRequest);
-        try {
+        assertTrueDataExistInDb("name\": \"Tesla");
+    }
+
+    private void assertTrueDataExistInDb(String data) {
+        try (Stream<String> dbStream = Files.lines(Paths.get(Params.DB_PATH))) {
             Assertions.assertTrue(
-                    Files.lines(Path.of(Params.DB_PATH))
-                            .anyMatch(line -> line.contains("name\": \"Tesla")));
+                    dbStream.anyMatch(line -> line.contains(data)));
         } catch (IOException e) {
-            throwCantReadFileEx();
+            throw new RuntimeException("Can't read file with path: " + Params.DB_PATH);
         }
     }
-
-    private void throwCantReadFileEx() {
-        throw new RuntimeException("Can't read file with path: " + Params.DB_PATH);
-    }
-
 
     @AfterAll
     static void stop() {
