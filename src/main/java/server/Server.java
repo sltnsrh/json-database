@@ -35,7 +35,7 @@ public class Server implements Runnable {
                 executor.execute(new ClientHandler(client, this));
                 System.out.println("Server: Processing request...");
                 try {
-                    Thread.sleep(20);
+                    Thread.sleep(100);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
