@@ -11,9 +11,9 @@ import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import server.util.Params;
 
 public final class DataStorage {
-    private static final String DB_PATH = "src/main/resources/data/db.json";
     private static JsonObject dataBase;
 
     private DataStorage() {
@@ -25,9 +25,9 @@ public final class DataStorage {
 
     public static void init() {
         try {
-            dataBase = readDbFromFile(Path.of(DB_PATH)).getAsJsonObject();
+            dataBase = readDbFromFile(Path.of(Params.DB_PATH)).getAsJsonObject();
         } catch (IOException e) {
-            throw new RuntimeException("Can't get data from the file: " + DB_PATH, e);
+            throw new RuntimeException("Can't get data from the file: " + Params.DB_PATH, e);
         }
     }
 
@@ -43,11 +43,11 @@ public final class DataStorage {
     }
 
     public static void writeDbToFile() {
-        File file = new File(DB_PATH);
+        File file = new File(Params.DB_PATH);
         try (FileWriter writer = new FileWriter(file)) {
             writer.write(new GsonBuilder().setPrettyPrinting().create().toJson(dataBase));
         } catch (IOException e) {
-            throw new RuntimeException("Can't write data to DB " + DB_PATH, e);
+            throw new RuntimeException("Can't write data to DB " + Params.DB_PATH, e);
         }
     }
 
