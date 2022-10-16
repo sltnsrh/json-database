@@ -37,8 +37,11 @@ public class DataGetter implements Executable {
                                                     ResponseProducer responseProducer) {
         JsonArray keys = key.getAsJsonArray();
         if (keys.size() == 1) {
-            String value = DataStorage.getDataBase().get(keys.getAsString()).toString();
-            return responseProducer.getValueOk(value);
+            if (DataStorage.getDataBase().has(key.getAsString())) {
+                String value = DataStorage.getDataBase().get(keys.getAsString()).toString();
+                return responseProducer.getValueOk(value);
+            }
+            return responseProducer.getNoSuchKey();
         }
         JsonElement jsonElementToGet = DataStorage.findElement(keys);
         if (jsonElementToGet == null) {

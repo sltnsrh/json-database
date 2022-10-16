@@ -48,7 +48,7 @@ class DataGetterTest {
                 .setType("get")
                 .setKey("machine")
                 .build();
-       client.runClient(setRequest);
+        client.runClient(setRequest);
         Assertions.assertTrue(outContent.toString().contains("Tesla"));
     }
 
@@ -60,6 +60,46 @@ class DataGetterTest {
                 .build();
         client.runClient(setRequest);
         Assertions.assertTrue(outContent.toString().contains("No such key"));
+    }
+
+    @Test
+    public void getValueWithKeysArrayWithOneKey() {
+        RequestToServer setRequest = RequestToServer.builder()
+                .setFileName("test2Get.json")
+                .build();
+        client.runClient(setRequest);
+        Assertions.assertTrue(outContent.toString().contains("\"value\": {\n"
+                + "    \"car\": {\n"
+                + "      \"name\": \"Tesla\"\n"
+                + "    }\n"
+                + "  }"));
+    }
+
+    @Test
+    public void getValueWithKeysArrayWithOneNotExistingKey() {
+        RequestToServer setRequest = RequestToServer.builder()
+                .setFileName("test3Get.json")
+                .build();
+        client.runClient(setRequest);
+        Assertions.assertTrue(outContent.toString().contains("No such key"));
+    }
+
+    @Test
+    public void getValueWithKeysArrayAndNotExistKey() {
+        RequestToServer setRequest = RequestToServer.builder()
+                .setFileName("test4Get.json")
+                .build();
+        client.runClient(setRequest);
+        Assertions.assertTrue(outContent.toString().contains("No such key"));
+    }
+
+    @Test
+    public void getValueWithKeysArrayAndValueAsJsonObject() {
+        RequestToServer setRequest = RequestToServer.builder()
+                .setFileName("test5Get.json")
+                .build();
+        client.runClient(setRequest);
+        Assertions.assertTrue(outContent.toString().contains("\"name\": \"Tesla\""));
     }
 
     @AfterAll
