@@ -1,7 +1,7 @@
 package server.service;
 
-import client.Client;
-import client.RequestToServer;
+import client.communication.Client;
+import client.util.RequestToServer;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.PrintStream;
@@ -9,7 +9,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import server.Server;
+import server.communication.Server;
 
 class DataGetterTest {
     private static final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
@@ -29,7 +29,7 @@ class DataGetterTest {
                 .setFileName("test3Set.json")
                 .build();
         client = new Client();
-        client.runClient(setRequest);
+        client.run(setRequest);
         System.setOut(new PrintStream(outContent));
     }
 
@@ -38,7 +38,7 @@ class DataGetterTest {
         RequestToServer setRequest = RequestToServer.builder()
                 .setFileName("testGet.json")
                 .build();
-        client.runClient(setRequest);
+        client.run(setRequest);
         Assertions.assertTrue(outContent.toString().contains("\"value\": \"Tesla\""));
     }
 
@@ -48,7 +48,7 @@ class DataGetterTest {
                 .setType("get")
                 .setKey("machine")
                 .build();
-        client.runClient(setRequest);
+        client.run(setRequest);
         Assertions.assertTrue(outContent.toString().contains("Tesla"));
     }
 
@@ -58,7 +58,7 @@ class DataGetterTest {
                 .setType("get")
                 .setKey("notexistkey")
                 .build();
-        client.runClient(setRequest);
+        client.run(setRequest);
         Assertions.assertTrue(outContent.toString().contains("No such key"));
     }
 
@@ -67,7 +67,7 @@ class DataGetterTest {
         RequestToServer setRequest = RequestToServer.builder()
                 .setFileName("test2Get.json")
                 .build();
-        client.runClient(setRequest);
+        client.run(setRequest);
         Assertions.assertTrue(outContent.toString().contains("\"value\": {\n"
                 + "    \"car\": {\n"
                 + "      \"name\": \"Tesla\"\n"
@@ -80,7 +80,7 @@ class DataGetterTest {
         RequestToServer setRequest = RequestToServer.builder()
                 .setFileName("test3Get.json")
                 .build();
-        client.runClient(setRequest);
+        client.run(setRequest);
         Assertions.assertTrue(outContent.toString().contains("No such key"));
     }
 
@@ -89,7 +89,7 @@ class DataGetterTest {
         RequestToServer setRequest = RequestToServer.builder()
                 .setFileName("test4Get.json")
                 .build();
-        client.runClient(setRequest);
+        client.run(setRequest);
         Assertions.assertTrue(outContent.toString().contains("No such key"));
     }
 
@@ -98,7 +98,7 @@ class DataGetterTest {
         RequestToServer setRequest = RequestToServer.builder()
                 .setFileName("test5Get.json")
                 .build();
-        client.runClient(setRequest);
+        client.run(setRequest);
         Assertions.assertTrue(outContent.toString().contains("\"name\": \"Tesla\""));
     }
 

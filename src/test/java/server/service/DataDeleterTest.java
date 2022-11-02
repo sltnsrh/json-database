@@ -1,7 +1,7 @@
 package server.service;
 
-import client.Client;
-import client.RequestToServer;
+import client.communication.Client;
+import client.util.RequestToServer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import java.io.ByteArrayOutputStream;
@@ -16,7 +16,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import server.Server;
+import server.communication.Server;
 import server.storage.DataStorage;
 import server.util.Params;
 
@@ -55,7 +55,7 @@ class DataDeleterTest {
         RequestToServer setRequest = RequestToServer.builder()
                 .setFileName("testDelete.json")
                 .build();
-        client.runClient(setRequest);
+        client.run(setRequest);
         assertFalseDataExistInDb("\"name\": \"falcon\"");
     }
 
@@ -65,7 +65,7 @@ class DataDeleterTest {
                 .setType("delete")
                 .setKey("person")
                 .build();
-        client.runClient(deleteRequest);
+        client.run(deleteRequest);
         assertFalseDataExistInDb("person");
     }
 
@@ -75,7 +75,7 @@ class DataDeleterTest {
                 .setType("delete")
                 .setKey("noexistkey")
                 .build();
-        client.runClient(deleteRequest);
+        client.run(deleteRequest);
         Assertions.assertTrue(outContent.toString().contains("No such key"));
     }
 
@@ -84,7 +84,7 @@ class DataDeleterTest {
         RequestToServer deleteRequest = RequestToServer.builder()
                 .setFileName("test2Delete.json")
                 .build();
-        client.runClient(deleteRequest);
+        client.run(deleteRequest);
         Assertions.assertTrue(outContent.toString().contains("No such key"));
     }
 

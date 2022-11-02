@@ -1,7 +1,7 @@
 package server.service;
 
-import client.Client;
-import client.RequestToServer;
+import client.communication.Client;
+import client.util.RequestToServer;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -11,7 +11,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import server.Server;
+import server.communication.Server;
 import server.util.Params;
 
 class DataSetterTest {
@@ -36,7 +36,7 @@ class DataSetterTest {
                 .setKey("Person")
                 .setValue("Bob")
                 .build();
-        client.runClient(setRequest);
+        client.run(setRequest);
         assertTrueDataExistInDb("\"Person\": \"Bob\"");
     }
 
@@ -45,7 +45,7 @@ class DataSetterTest {
         RequestToServer setRequest = RequestToServer.builder()
                 .setFileName("test2Set.json")
                 .build();
-        client.runClient(setRequest);
+        client.run(setRequest);
         assertTrueDataExistInDb("launches\": \"88");
     }
 
@@ -54,7 +54,7 @@ class DataSetterTest {
         RequestToServer setRequest = RequestToServer.builder()
                 .setFileName("test3Set.json")
                 .build();
-        client.runClient(setRequest);
+        client.run(setRequest);
         assertTrueDataExistInDb("name\": \"Tesla");
     }
 

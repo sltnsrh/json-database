@@ -1,7 +1,7 @@
 package server.service;
 
-import server.RequestFromClient;
-import server.ServerResponse;
+import server.communication.RequestFromClient;
+import server.communication.ServerResponse;
 
 public interface Executable {
     ServerResponse processData(RequestFromClient requestFromClient,

@@ -1,4 +1,4 @@
-package client;
+package client.util;
 
 import com.beust.jcommander.Parameter;
 import com.google.gson.Gson;
@@ -10,6 +10,7 @@ import java.nio.file.Path;
 
 public class RequestToServer {
     private static final String CLIENT_DATA_PATH = "src/main/resources/data/";
+
     @Parameter(names = {"--type", "-t"})
     private String type;
     @Parameter(names = {"--key", "-k"})

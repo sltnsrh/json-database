@@ -1,5 +1,6 @@
-package client;
+package client.communication;
 
+import client.util.RequestToServer;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -9,7 +10,7 @@ import server.util.Params;
 
 public class Client {
 
-    public void runClient(RequestToServer requestToServer) {
+    public void run(RequestToServer requestToServer) {
         try (
                 Socket socket = new Socket(
                         InetAddress.getByName(Params.SERVER_ADDRESS), Params.SERVER_PORT);
