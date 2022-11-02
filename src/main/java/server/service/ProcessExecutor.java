@@ -1,8 +1,8 @@
 package server.service;
 
 import com.google.gson.Gson;
-import server.RequestFromClient;
-import server.ServerResponse;
+import server.communication.RequestFromClient;
+import server.communication.ServerResponse;
 import server.util.Operations;
 
 public class ProcessExecutor {

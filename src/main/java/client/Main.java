@@ -1,5 +1,7 @@
 package client;
 
+import client.communication.Client;
+import client.util.RequestToServer;
 import com.beust.jcommander.JCommander;
 
 public class Main {
@@ -11,6 +13,6 @@ public class Main {
                 .build()
                 .parse(args);
         Client client = new Client();
-        client.runClient(requestToServer);
+        client.run(requestToServer);
     }
 }

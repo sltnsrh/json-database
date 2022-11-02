@@ -2,8 +2,8 @@ package server.service;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
-import server.RequestFromClient;
-import server.ServerResponse;
+import server.communication.RequestFromClient;
+import server.communication.ServerResponse;
 import server.storage.DataStorage;
 import server.util.ReadWriteLocker;
 

@@ -1,7 +1,7 @@
 package server.service;
 
 import com.google.gson.JsonParser;
-import server.ServerResponse;
+import server.communication.ServerResponse;
 
 public class ResponseProducer {
     private static final String NO_SUCH_KEY_REASON = "No such key";
